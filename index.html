@@ -1,128 +1,936 @@
 <!DOCTYPE html>
 <html lang="uz">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lug'at audio — Unit 1-10</title>
-<style>
-:root{--bg:#f7f6f2;--card:#fff;--tx:#1c1c1a;--mu:#6b6a65;--ac:#2b6cb0;--hl:#fff3c4;--bd:#e3e1da;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#171716;--card:#222220;--tx:#eeede8;--mu:#a09f98;--ac:#6aa9ec;--hl:#4a4020;--bd:#34332f}}
-:root[data-theme="dark"]{--bg:#171716;--card:#222220;--tx:#eeede8;--mu:#a09f98;--ac:#6aa9ec;--hl:#4a4020;--bd:#34332f}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:720px;margin:0 auto;padding:16px}
-h1{font-size:22px;margin:8px 0 4px}
-p.s{color:var(--mu);margin:0 0 14px;font-size:14px}
-.panel{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:14px}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-label{font-size:13px;color:var(--mu);display:flex;flex-direction:column;gap:3px;flex:1;min-width:130px}
-select,input{font:inherit;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);width:100%}
-button{font:inherit;padding:10px 18px;border-radius:10px;border:1px solid var(--ac);background:var(--ac);color:#fff;cursor:pointer}
-button.g{background:transparent;color:var(--ac)}
-#now{font-size:20px;font-weight:600;margin:12px 0 2px;min-height:30px}
-#st{color:var(--mu);font-size:14px}
-#list{list-style:none;margin:0;padding:0}
-#list li{display:flex;gap:8px;padding:9px 10px;border-bottom:1px solid var(--bd);cursor:pointer;flex-wrap:wrap}
-#list li.on{background:var(--hl)}
-#list b{min-width:150px}
-#list i{color:var(--mu);min-width:120px;font-style:normal;font-size:14px}
-#tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}#tabs button{padding:6px 12px;font-size:14px}#tabs button.act{background:var(--ac);color:#fff}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Oxford Lug'at Audio & Mashqlar — Unit 1-10</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0284c7',
+              700: '#0369a1',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .perspective-1000 { perspective: 1000px; }
+    .transform-style-3d { transform-style: preserve-3d; }
+    .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .rotate-y-180 { transform: rotateY(180deg); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
 </head>
-<body>
-<main>
-<h1>Lug'at audio</h1>
-<p class="s">Unitni tanlang. Har bir so'z: inglizcha 2 marta, keyin o'zbekcha 2 marta, orasida pauza.</p>
-<div id="tabs"></div>
-<div class="panel">
-<div class="row">
-<label>Inglizcha ovoz<select id="ve"></select></label>
-<label>O'zbekcha ovoz<select id="vu"></select></label>
-</div>
-<div class="row" style="margin-top:10px">
-<label>Takror<input id="rep" type="number" min="1" max="5" value="2"></label>
-<label>Pauza (soniya)<input id="gap" type="number" min="0" max="10" step="0.5" value="2"></label>
-<label>Tezlik<input id="rate" type="number" min="0.5" max="1.5" step="0.1" value="0.9"></label>
-</div>
-<div class="row" style="margin-top:12px">
-<button id="play">▶ Boshlash</button>
-<button id="stop" class="g">■ To'xtatish</button>
-</div>
-<div id="now"></div>
-<div id="st">Ro'yxatdan istalgan so'zni bosib, o'sha joydan boshlashingiz mumkin.</div>
-<div id="nov" style="display:none;color:#b7791f;font-size:13px;margin-top:8px">Qurilmangizda o'zbek ovozi topilmadi, o'zbekcha so'zlar boshqa ovozda o'qilishi mumkin. Chrome/Edge yoki Android'da odatda yaxshiroq ishlaydi.</div>
-</div>
-<ul id="list"></ul>
-</main>
-<script>
-const UNITS={"1":[["address","manzil"],["alphabet","alifbo"],["am","bo‘lmoq; “I” bilan ishlatiladi"],["and","va"],["are","bo‘lmoq; “you, we, they” bilan ishlatiladi"],["be","bo‘lmoq"],["business","biznes; ish"],["city","shahar"],["country","mamlakat"],["day","kun"],["fine","yaxshi"],["first name","ism"],["from","…dan"],["good morning","xayrli tong"],["goodbye","xayr"],["great","ajoyib; juda yaxshi"],["hello","salom"],["here","bu yerda"],["hi","salom"],["holiday","ta’til"],["hotel","mehmonxona"],["how","qanday"],["I","men"],["in","ichida; …da"],["introduce","tanishtirmoq"],["is","bo‘lmoq; “he, she, it” bilan ishlatiladi"],["last name","familiya"],["letter","harf; xat"],["map","xarita"],["meeting","uchrashuv; yig‘ilish"],["name","ism"],["no","yo‘q"],["number","raqam; son"],["on","ustida; …da"],["right","to‘g‘ri"],["phone number","telefon raqami"],["spell","harflab aytmoq; yozmoq"],["study","o‘qimoq; tahsil olmoq"],["thanks","rahmat"],["that","u; ana u"],["too","ham"],["what","nima; qanday"],["where","qayerda; qayerga"],["yes","ha"],["you","sen; siz"],["your","sening; sizning"],["one","bir"],["two","ikki"],["three","uch"],["four","to‘rt"],["five","besh"],["six","olti"],["seven","yetti"],["eight","sakkiz"],["nine","to‘qqiz"],["ten","o‘n"],["Australia","Avstraliya"],["Brazil","Braziliya"],["China","Xitoy"],["Indonesia","Indoneziya"],["Japan","Yaponiya"],["Russia","Rossiya"],["Spain","Ispaniya"],["Turkey","Turkiya"],["the UK","Birlashgan Qirollik"],["the USA","Amerika Qo‘shma Shtatlari"]],"2":[["a, an","bir; noaniq artikl"],["about","haqida"],["airport","aeroport"],["apple","olma"],["Argentina","Argentina"],["bag","sumka"],["book","kitob"],["building","bino"],["bus","avtobus"],["chef","oshpaz"],["class","sinf; dars"],["company","kompaniya; firma"],["doctor","shifokor"],["email","elektron xat; elektron pochta"],["engineer","muhandis"],["English","ingliz tili; inglizcha"],["friend","do‘st"],["garden","bog‘"],["guy","yigit; kishi"],["hospital","shifoxona"],["Italian","italyan; italyancha"],["Italy","Italiya"],["job","ish; kasb"],["key","kalit"],["language school","til maktabi"],["laptop","noutbuk"],["letter","xat"],["Mexico","Meksika"],["museum","muzey"],["near","yaqin; yaqinida"],["next to","yonida"],["nice","yaxshi; yoqimli; chiroyli"],["notepad","bloknot; qayd daftari"],["nurse","hamshira"],["object","buyum; narsa"],["o’clock","soat"],["office","ofis; ishxona"],["pen","ruchka"],["phone","telefon"],["photo","fotosurat; surat"],["restaurant","restoran"],["river","daryo"],["road","yo‘l"],["Romania","Ruminiya"],["school","maktab"],["shop assistant","do‘kon sotuvchisi"],["sister","opa; singil"],["square","maydon"],["station","bekat; stansiya"],["street","ko‘cha"],["student","talaba; o‘quvchi"],["tablet","planshet"],["taxi driver","taksi haydovchisi"],["teacher","o‘qituvchi"],["Thailand","Tailand"],["there","u yerda"],["these","bular"],["this","bu"],["those","anavilar; ana ular"],["time","vaqt; soat"],["train","poyezd"],["umbrella","soyabon"],["university","universitet"],["waiter","ofitsiant"],["wallet","hamyon"],["week","hafta"],["who","kim"],["eleven","o‘n bir"],["twelve","o‘n ikki"],["thirteen","o‘n uch"],["fourteen","o‘n to‘rt"],["fifteen","o‘n besh"],["sixteen","o‘n olti"],["seventeen","o‘n yetti"],["eighteen","o‘n sakkiz"],["nineteen","o‘n to‘qqiz"],["twenty","yigirma"],["twenty-one","yigirma bir"],["twenty-two","yigirma ikki"],["thirty","o‘ttiz"],["forty","qirq"],["fifty","ellik"],["sixty","oltmish"],["seventy","yetmish"],["eighty","sakson"],["ninety","to‘qson"],["a hundred","yuz"]],"3":[["a.m.","ertalab; tushgacha bo‘lgan vaqt"],["artist","rassom; san’atkor"],["bad","yomon"],["bank account","bank hisobi"],["beautiful","chiroyli"],["bedroom","yotoqxona"],["best friend","eng yaqin do‘st"],["bicycle","velosiped"],["big","katta"],["boy","o‘g‘il bola"],["brother","aka; uka"],["but","lekin; ammo"],["called","deb ataladigan; ismli"],["car","mashina; avtomobil"],["cat","mushuk"],["centre","markaz"],["cheap","arzon"],["child","bola"],["children","bolalar"],["clever","aqlli"],["coffee","qahva"],["cold","sovuq"],["conference","konferensiya; anjuman"],["daughter","qiz farzand"],["dog","it"],["expensive","qimmat"],["family","oila"],["father","ota"],["film","film"],["flat","kvartira"],["for me","men uchun"],["friendly","do‘stona; xushmuomala"],["funny","kulgili"],["girl","qiz bola"],["good","yaxshi"],["grandfather","bobo"],["grandmother","buvi"],["grandparents","bobo va buvi"],["happy","xursand; baxtli"],["hard","qiyin"],["hot","issiq"],["house","uy"],["husband","er"],["interesting","qiziqarli"],["lovely","yoqimli; juda yaxshi"],["man","erkak"],["married","turmush qurgan"],["men","erkaklar"],["message","xabar"],["mobile phone","mobil telefon"],["mother","ona"],["musician","musiqachi"],["neighbour","qo‘shni"],["new","yangi"],["New Zealand","Yangi Zelandiya"],["of course","albatta"],["old","eski; qari"],["old (age)","yoshda"],["p.m.","tushdan keyin; kechki vaqt"],["painting","rasm; kartina"],["parents","ota-ona"],["people","odamlar"],["person","odam; kishi"],["pet","uy hayvoni"],["place","joy"],["please","iltimos"],["poor","kambag‘al"],["possession","mol-mulk; egalikdagi narsa"],["project","loyiha"],["rich","boy"],["room","xona"],["sad","xafa; g‘amgin"],["sea","dengiz"],["seat","o‘rindiq; joy"],["shop","do‘kon"],["sister","opa; singil"],["small","kichik"],["son","o‘g‘il farzand"],["song","qo‘shiq"],["sorry","uzr; afsus"],["TV","televizor"],["toilet","hojatxona"],["village","qishloq"],["wife","xotin; rafiqa"],["woman","ayol"],["women","ayollar"],["world","dunyo"],["young","yosh"]],"4":[["a lot","ko‘p"],["actor","aktyor"],["art","san’at"],["at the weekend","dam olish kunlari"],["baseball","beysbol"],["basketball","basketbol"],["beach","plyaj; sohil"],["bookshop","kitob do‘koni"],["bus","avtobus"],["call","qo‘ng‘iroq qilmoq"],["card games","karta o‘yinlari"],["cent","sent"],["charity","xayriya"],["check emails","elektron xatlarni tekshirmoq"],["comics","komikslar"],["customer","mijoz; xaridor"],["cycle","velosiped minmoq"],["Denmark","Daniya"],["department store","universal do‘kon"],["different","boshqacha; turli"],["dollar","dollar"],["drive","mashina haydamoq"],["early","erta"],["electronics shop","elektronika do‘koni"],["euro","yevro"],["factory","zavod; fabrika"],["favourite","sevimli"],["ferry","parom"],["finish work","ishni tugatmoq"],["get dressed","kiyinmoq"],["get home","uyga kelmoq"],["get up","uyqudan turmoq"],["go","bormoq"],["go abroad","chet elga bormoq"],["go out","tashqariga chiqmoq"],["go to bed","uxlashga yotmoq"],["go to work","ishga bormoq"],["guitar","gitara"],["have","ega bo‘lmoq; bor bo‘lmoq"],["have a bath","vanna qabul qilmoq; cho‘milmoq"],["have a shower","dush qabul qilmoq"],["have breakfast","nonushta qilmoq"],["have dinner","kechki ovqat yemoq"],["help","yordam bermoq"],["in my free time","bo‘sh vaqtimda"],["journey","safar; sayohat"],["Kenya","Keniya"],["like","yoqtirmoq"],["live","yashamoq"],["lives","hayotlar"],["motorbike","mototsikl"],["named","ismli; deb nomlangan"],["need","kerak bo‘lmoq; muhtoj bo‘lmoq"],["newspaper","gazeta"],["over there","ana u yerda"],["park","park; bog‘"],["pence","pens"],["pharmacy","dorixona"],["play","o‘ynamoq"],["pound","funt"],["public transport","jamoat transporti"],["read","o‘qimoq"],["same","bir xil"],["similar","o‘xshash"],["sometimes","ba’zan"],["South Africa","Janubiy Afrika"],["South Korea","Janubiy Koreya"],["start work","ishni boshlamoq"],["study","o‘qimoq; tahsil olmoq"],["Switzerland","Shveytsariya"],["teach","dars bermoq; o‘qitmoq"],["tennis","tennis"],["text message","matnli xabar; SMS"],["ticket","chipta"],["together","birga"],["train","poyezd"],["Vietnam","Vyetnam"],["walk","piyoda yurmoq"],["watch","tomosha qilmoq"],["work","ishlamoq"],["writer","yozuvchi"],["Monday","dushanba"],["Tuesday","seshanba"],["Wednesday","chorshanba"],["Thursday","payshanba"],["Friday","juma"],["Saturday","shanba"],["Sunday","yakshanba"]],"5":[["a piece of","bir bo‘lak; bir parcha"],["adult","katta yoshli odam"],["always","har doim"],["amazing","ajoyib; hayratlanarli"],["announcement","e’lon"],["architecture","me’morchilik"],["arm","qo‘l"],["bank","bank"],["bare feet","yalang oyoqlar"],["basic","asosiy; oddiy"],["because","chunki"],["black","qora"],["blue","ko‘k"],["body","tana"],["Bolivia","Boliviya"],["bowler hat","kotelok shlyapa"],["brown","jigarrang"],["busy","band"],["buy","sotib olmoq"],["casual","kundalik; norasmiy"],["change","o‘zgartirmoq"],["cinema","kinoteatr"],["close","yopmoq"],["clothes","kiyimlar"],["colour","rang"],["colourful","rang-barang"],["comment","izoh"],["designer","dizayner"],["dress","ko‘ylak"],["eat","yemoq"],["Europe","Yevropa"],["every day","har kuni"],["example","misol"],["exciting","hayajonli; qiziqarli"],["face","yuz"],["fake tan","sun’iy qorayish"],["famous","mashhur"],["fashion","moda"],["feature","xususiyat"],["first floor","birinchi qavat"],["floor","qavat; pol"],["flower","gul"],["foot","oyoq panjasi"],["France","Fransiya"],["go shopping","xarid qilishga bormoq"],["good quality","sifatli; yaxshi sifat"],["green","yashil"],["grey","kulrang"],["hair","soch"],["hand","qo‘l"],["head","bosh"],["important","muhim"],["in the week","hafta davomida; ish kunlarida"],["Indian","hind; hindistonlik"],["information","ma’lumot"],["interesting","qiziqarli"],["jacket","kurtka"],["jeans","jinsi shim"],["jumper","sviter"],["late","kech"],["leather","charm"],["leave","jo‘nab ketmoq; tark etmoq"],["leg","oyoq"],["location","joylashuv; manzil"],["long","uzun"],["lunch","tushlik"],["magazine","jurnal"],["make arrangements","kelishib olmoq; rejalar tuzmoq"],["midday","tush payti"],["modern","zamonaviy"],["music","musiqa"],["never","hech qachon"],["next","keyingi"],["night","tun; kechasi"],["often","tez-tez"],["open","ochmoq; ochiq"],["opening times","ochilish vaqtlari; ish vaqti"],["orange","to‘q sariq"],["outside","tashqarida"],["popular","mashhur; ommabop"],["public","ommaviy; jamoat uchun ochiq"],["really","haqiqatan; juda"],["reason","sabab"],["red","qizil"],["shawl","shol; yelka ro‘moli"],["shirt","ko‘ylak"],["shoes","poyabzal"],["skin","teri"],["skirt","yubka"],["smart","bashang; ozoda"],["speak","gapirmoq"],["sports","sport"],["stadium","stadion"],["strange","g‘alati"],["strong","kuchli"],["style","uslub"],["sun","quyosh"],["swimming pool","suzish havzasi"],["team","jamoa"],["think","o‘ylamoq"],["top","ustki kiyim; yuqori qism"],["town","shaharcha; shahar"],["traditional","an’anaviy"],["trainers","sport oyoq kiyimi; krossovka"],["travel","sayohat qilmoq"],["trousers","shim"],["T-shirt","futbolka"],["type","tur"],["unusual","noodatiy"],["useful","foydali"],["usually","odatda"],["wear","kiymoq"],["white","oq"],["why","nima uchun; nega"],["wind","shamol"],["wood","yog‘och"],["yellow","sariq"]],"6":[["access","kirish huquqi; foydalanish imkoniyati"],["air conditioning","konditsioner; havoni sovitish tizimi"],["all","barcha; hamma"],["another","boshqa; yana bir"],["area","hudud; joy"],["arrive","yetib kelmoq"],["bakery","novvoyxona"],["balcony","balkon"],["bath","vanna"],["bathroom","hammom"],["bed","karavot"],["bedroom","yotoqxona"],["book","band qilmoq; bron qilmoq"],["broken","singan; buzilgan"],["café","kafe"],["car park","avtoturargoh"],["chair","stul"],["check-in","ro‘yxatdan o‘tish; mehmonxonaga kirish"],["checkout","mehmonxonadan chiqish"],["clean","toza"],["code","kod"],["cupboard","shkaf"],["dining room","ovqatlanish xonasi"],["dirty","iflos"],["drink","ichimlik"],["each","har bir"],["facilities","qulayliklar; xizmatlar"],["festival","festival; bayram tadbiri"],["fishing","baliq ovlash"],["for hours","soatlab; bir necha soat davomida"],["forest","o‘rmon"],["free parking","bepul avtoturargoh"],["fridge","muzlatkich"],["give","bermoq"],["golf course","golf maydoni"],["guest","mehmon"],["gym","sport zali"],["have a reservation","bron qilgan bo‘lmoq"],["heater","isitgich"],["instructions","ko‘rsatmalar; yo‘riqnoma"],["internet","internet"],["iron","dazmol"],["ironing board","dazmol taxtasi"],["kitchen","oshxona"],["lift","lift"],["like me","menga o‘xshagan; men kabi"],["link","havola"],["living room","mehmonxona"],["local","mahalliy"],["love","sevmoq; juda yoqtirmoq"],["lucky","omadli"],["microwave","mikroto‘lqinli pech"],["mini-bar","mini-bar"],["minute","daqiqa"],["mountain","tog‘"],["noisy","shovqinli"],["own","o‘ziga tegishli; o‘zining"],["password","parol"],["pizza","pitsa"],["problem","muammo"],["quiet","tinch; jim"],["reception","qabulxona"],["receptionist","qabulxona xodimi"],["refreshments","yengil taomlar va ichimliklar"],["safe","seyf"],["send","yubormoq"],["shower","dush"],["sofa","divan"],["staff","xodimlar"],["supermarket","supermarket"],["switch","o‘chirgich; yoqib-o‘chirish tugmasi"],["table","stol"],["tea","choy"],["theatre","teatr"],["theme","mavzu"],["toilet","hojatxona"],["towels","sochiqlar"],["tree house","daraxt uyi"],["try","urinib ko‘rmoq; sinab ko‘rmoq"],["TV","televizor"],["visitor","tashrif buyuruvchi; mehmon"],["water","suv"],["website","veb-sayt"],["Wi-Fi","simsiz internet"]],"7":[["a bottle of","bir shisha; bir butilka"],["ability","qobiliyat"],["advert","reklama"],["Algeria","Jazoir"],["animal","hayvon"],["badly","yomon; yomon tarzda"],["behaviour","xulq-atvor"],["bird","qush"],["bored","zerikkan"],["boring","zerikarli"],["box","quti"],["computer skills","kompyuter ko‘nikmalari"],["contact","bog‘lanmoq; aloqa qilmoq"],["cook","ovqat pishirmoq"],["cost","turmoq; narxi bo‘lmoq"],["dance","raqs tushmoq"],["dolphin","delfin"],["each other","bir-birini; bir-biriga"],["electric piano","elektron pianino"],["enthusiastic","g‘ayratli; ishtiyoqli"],["fast","tez"],["fast","tez ravishda"],["fly","uchmoq"],["foreign language","chet tili"],["go on Facebook or Twitter","Facebook yoki Twitter’ga kirmoq"],["go out with friends","do‘stlar bilan tashqariga chiqmoq"],["go to the cinema","kinoteatrga bormoq"],["go to the theatre","teatrga bormoq"],["goldfish","tilla baliq"],["gorilla","gorilla"],["guide","gid; yo‘l ko‘rsatuvchi"],["hate","yomon ko‘rmoq"],["hobby","sevimli mashg‘ulot"],["interest","qiziqish"],["interested in","…ga qiziqqan"],["know","bilmoq"],["Lebanon","Livan"],["listen to music","musiqa tinglamoq"],["lost","adashgan; yo‘qolgan"],["make things","narsalar yasamoq"],["nobody","hech kim"],["paintbrush","rasm chizish cho‘tkasi"],["parrot","to‘tiqush"],["picture","rasm; surat"],["play sport","sport bilan shug‘ullanmoq"],["play video games","videoo‘yinlar o‘ynamoq"],["post","post; internetdagi yozuv"],["record","yozib olmoq; qayd etmoq"],["remember","eslamoq"],["research","tadqiqot"],["ride","minmoq"],["run","yugurmoq"],["seat","o‘rindiq; joy"],["shop online","internet orqali xarid qilmoq"],["sign","belgi; imo-ishora"],["sing","qo‘shiq aytmoq"],["skill","ko‘nikma; mahorat"],["slowly","sekin"],["social media","ijtimoiy tarmoqlar"],["Spanish","ispan tili; ispancha"],["swim","suzmoq"],["swimmer","suzuvchi"],["take photos","suratga olmoq"],["thirsty","chanqagan"],["tourist","sayyoh"],["translator","tarjimon"],["type","klaviaturada yozmoq; matn termoq"],["typist","matn teruvchi"],["Uruguay","Urugvay"],["video","video"],["volunteer","ko‘ngilli"],["watch sport","sport tomosha qilmoq"],["well","yaxshi; yaxshi tarzda"],["work in the garden","bog‘da ishlamoq"],["write","yozmoq"]],"8":[["accident","baxtsiz hodisa; avariya"],["actress","aktrisa"],["adventure","sarguzasht"],["article","maqola"],["astronaut","astronavt; fazogir"],["birthday","tug‘ilgan kun"],["boss","boshliq; rahbar"],["carpenter","duradgor"],["century","asr"],["characters","qahramonlar; personajlar"],["collect","to‘plamoq; yig‘moq"],["die","vafot etmoq; o‘lmoq"],["document","hujjat"],["dream","orzu"],["foundation","jamg‘arma; fond"],["glider","motorsiz samolyot; planer"],["grow up","ulg‘aymoq"],["horse","ot"],["last year","o‘tgan yil"],["leader","yetakchi; rahbar"],["party","ziyofat; bazm"],["real","haqiqiy"],["return","qaytmoq"],["scientist","olim"],["storyteller","hikoyachi; ertakchi"],["tale","ertak; hikoya"],["was born","tug‘ilgan edi; dunyoga kelgan"],["yesterday","kecha"],["first","birinchi"],["second","ikkinchi"],["third","uchinchi"],["fourth","to‘rtinchi"],["fifth","beshinchi"],["sixth","oltinchi"],["seventh","yettinchi"],["eighth","sakkizinchi"],["ninth","to‘qqizinchi"],["tenth","o‘ninchi"],["eleventh","o‘n birinchi"],["twelfth","o‘n ikkinchi"],["twentieth","yigirmanchi"],["twenty-first","yigirma birinchi"],["twenty-third","yigirma uchinchi"],["thirtieth","o‘ttizinchi"],["thirty-first","o‘ttiz birinchi"],["January","yanvar"],["February","fevral"],["March","mart"],["April","aprel"],["May","may"],["June","iyun"],["July","iyul"],["August","avgust"],["September","sentabr"],["October","oktabr"],["November","noyabr"],["December","dekabr"]],"9":[["a day off","dam olish kuni"],["ago","oldin; avval"],["atmosphere","muhit; atmosfera"],["autumn","kuz"],["bill","hisob; hisob varaqasi"],["cloudy","bulutli"],["cold","sovuq"],["come","kelmoq"],["comedian","komik; qiziqchi"],["cost","narx; xarajat"],["difficult","qiyin"],["ending","yakun; oxiri"],["event","voqea; tadbir"],["excuse","bahona; uzr"],["fall","yiqilmoq; tushmoq"],["fall in love","sevib qolmoq"],["forget","unutmoq"],["get","olmoq; yetib bormoq"],["get ill","kasal bo‘lmoq"],["happen","sodir bo‘lmoq"],["have a good time","vaqtni yaxshi o‘tkazmoq"],["headache","bosh og‘rig‘i"],["horror film","dahshatli film"],["hot","issiq"],["huge","ulkan; juda katta"],["illness","kasallik"],["in fact","aslida"],["keep warm","issiq tutmoq; isinib turmoq"],["knife","pichoq"],["lose","yo‘qotmoq"],["meat","go‘sht"],["meet","uchrashmoq"],["memory","xotira"],["millionaire","millioner"],["miss the train","poyezdni o‘tkazib yubormoq"],["mistake","xato"],["rainy","yomg‘irli"],["realize","anglamoq; tushunib yetmoq"],["receipt","chek; kvitansiya"],["retirement","nafaqaga chiqish; pensiya davri"],["see","ko‘rmoq"],["sell","sotmoq"],["service","xizmat"],["sleep","uxlamoq"],["snowy","qorli"],["spring","bahor"],["stormy","bo‘ronli"],["story","hikoya"],["subtropical","subtropik"],["summer","yoz"],["sunny","quyoshli"],["temperature","harorat"],["terrible","juda yomon; dahshatli"],["throw away","tashlab yubormoq"],["tip","choychaqa"],["waitress","ofitsiant ayol"],["warm","iliq"],["weather","ob-havo"],["winter","qish"]],"10":[["a cup of","bir piyola; bir chashka"],["a kind of","bir turdagi"],["apple juice","olma sharbati"],["biscuit","pechenye"],["burger","burger"],["buy a house","uy sotib olmoq"],["cake","tort"],["chance","imkoniyat"],["change jobs","ishini o‘zgartirmoq"],["chips","fri kartoshka"],["coffee","qahva"],["croissant","kruassan"],["cupcake","kichik keks"],["dessert","shirinlik; desert"],["doughnut","ponchik"],["drink","ichimlik"],["during","davomida"],["environment","atrof-muhit"],["filling","ichlik; ichiga solinadigan masalliq"],["finish school","maktabni tugatmoq"],["flight","parvoz"],["food","ovqat; oziq-ovqat"],["have a baby","farzandli bo‘lmoq"],["hot dog","hot-dog"],["in three days","uch kundan keyin"],["international","xalqaro"],["invitation","taklifnoma"],["island","orol"],["join","qo‘shilmoq"],["learn a new language","yangi til o‘rganmoq"],["menu","menyu"],["milk","sut"],["move abroad","chet elga ko‘chib o‘tmoq"],["next month","keyingi oy"],["orange juice","apelsin sharbati"],["order","buyurtma"],["order","buyurtma bermoq"],["organization","tashkilot"],["probably","ehtimol; balki"],["rice","guruch"],["salad","salat"],["sandwich","sendvich"],["sing","qo‘shiq aytmoq"],["snack","yengil tamaddi"],["special","maxsus; alohida"],["sweet","shirin"],["tea","choy"],["the day after tomorrow","indinga"],["this evening","bugun kechqurun"],["today","bugun"],["tomorrow","ertaga"],["tour","sayohat; ekskursiya"],["water","suv"],["would like","xohlamoq; istamoq"]]};
-let W=[];
-const $=id=>document.getElementById(id);
-const ss=window.speechSynthesis;
-let voices=[],token=0,running=false;
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-200 min-h-screen flex flex-col">
 
-const list=$("list");
-function setUnit(n){
-  token++;running=false;ss&&ss.cancel();
-  W=UNITS[n].map(p=>({en:p[0],uz:p[1]}));
-  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("act",b.dataset.u===n));
-  list.innerHTML="";
-  W.forEach((w,i)=>{const li=document.createElement("li");li.id="w"+i;
-    li.innerHTML="<b></b><span></span>";
-    li.children[0].textContent=w.en;li.children[1].textContent=w.uz;
-    li.onclick=()=>start(i);list.appendChild(li)});
-  $("now").textContent="Unit "+n+" — "+W.length+" ta so'z";
-  $("st").textContent="Ro'yxatdan istalgan so'zni bosib, o'sha joydan boshlashingiz mumkin.";
-}
-Object.keys(UNITS).forEach(n=>{const b=document.createElement("button");b.className="g";b.dataset.u=n;b.textContent="Unit "+n;b.onclick=()=>setUnit(n);$("tabs").appendChild(b)});
+  <!-- HEADER -->
+  <header class="bg-white dark:bg-slate-800 shadow-sm border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="bg-gradient-to-tr from-sky-500 to-indigo-600 text-white p-2.5 rounded-xl shadow-md">
+          <i class="fa-solid fa-book-open text-xl"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent dark:from-sky-400 dark:to-indigo-400">
+            Lug'at Audio & Mashqlar
+          </h1>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Oxford Elementary — Unit 1-10</p>
+        </div>
+      </div>
 
-function fillVoices(){
-  if(!ss)return;
-  voices=ss.getVoices();
-  const en=voices.filter(v=>/^en/i.test(v.lang));
-  const uz=voices.filter(v=>/^uz/i.test(v.lang));
-  const fill=(sel,arr,pref)=>{const keep=sel.value;sel.innerHTML="";
-    (arr.length?arr:voices).forEach(v=>{const o=document.createElement("option");o.value=v.voiceURI;o.textContent=v.name+" ("+v.lang+")";sel.appendChild(o)});
-    if(keep)sel.value=keep;else if(pref){const f=arr.find(pref);if(f)sel.value=f.voiceURI}};
-  fill($("ve"),en,v=>/GB/i.test(v.lang));
-  fill($("vu"),uz);
-  $("nov").style.display=uz.length?"none":"block";
-}
-if(ss){fillVoices();ss.onvoiceschanged=fillVoices}else{$("st").textContent="Brauzeringiz ovoz sintezini qo'llab-quvvatlamaydi."}
+      <div class="flex items-center space-x-3">
+        <div class="hidden sm:flex items-center space-x-2 bg-sky-50 dark:bg-slate-700 text-sky-700 dark:text-sky-300 px-3 py-1.5 rounded-lg text-xs font-semibold border border-sky-200 dark:border-slate-600">
+          <i class="fa-solid fa-layer-group text-sky-500"></i>
+          <span>Jami: <strong id="totalWordsBadge">0</strong> so'z</span>
+        </div>
 
-function speak(text,sel,lang){
-  return new Promise(res=>{
-    const u=new SpeechSynthesisUtterance(text);
-    const v=voices.find(x=>x.voiceURI===sel.value);
-    if(v){u.voice=v;u.lang=v.lang}else u.lang=lang;
-    u.rate=parseFloat($("rate").value)||0.9;
-    u.onend=u.onerror=()=>res();
-    ss.speak(u);
-  });
-}
-const wait=(ms,t)=>new Promise(r=>{const id=setTimeout(r,ms);});
+        <button id="themeToggleBtn" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition">
+          <i class="fa-solid fa-moon text-base dark:hidden"></i>
+          <i class="fa-solid fa-sun text-base hidden dark:block text-amber-400"></i>
+        </button>
+      </div>
+    </div>
+  </header>
 
-async function start(from){
-  if(!ss)return;
-  ss.cancel();
-  const my=++token;running=true;
-  const rep=Math.max(1,parseInt($("rep").value)||2);
-  const gap=Math.max(0,parseFloat($("gap").value)||0)*1000;
-  for(let i=from;i<W.length;i++){
-    if(my!==token)return;
-    document.querySelectorAll("#list li.on").forEach(e=>e.classList.remove("on"));
-    const li=$("w"+i);li.classList.add("on");li.scrollIntoView({block:"center",behavior:"smooth"});
-    $("now").textContent=W[i].en+" — "+W[i].uz;
-    $("st").textContent=(i+1)+" / "+W.length;
-    for(let r=0;r<rep;r++){if(my!==token)return;await speak(W[i].en,$("ve"),"en-GB");if(my!==token)return;await wait(gap);}
-    for(let r=0;r<rep;r++){if(my!==token)return;await speak(W[i].uz,$("vu"),"uz-UZ");if(my!==token)return;await wait(gap);}
-  }
-  running=false;$("st").textContent="Tugadi.";
-}
-$("play").onclick=()=>start(Math.max(0,W.findIndex((w,i)=>$("w"+i).classList.contains("on"))));
-$("stop").onclick=()=>{token++;running=false;ss&&ss.cancel();$("st").textContent="To'xtatildi."};
-setUnit("1");
-</script>
+  <!-- UNIT SELECTOR BAR -->
+  <section class="bg-white dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 shadow-inner">
+    <div class="max-w-6xl mx-auto px-4 py-2.5">
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1" id="unitTabsContainer">
+        <!-- Unit tabs injected dynamically -->
+      </div>
+    </div>
+  </section>
+
+  <!-- MODE NAVIGATION TABS -->
+  <nav class="bg-slate-100 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
+    <div class="max-w-6xl mx-auto px-2 flex overflow-x-auto no-scrollbar justify-start md:justify-center space-x-1 py-2">
+      <button onclick="switchTab('flashcards')" id="tab-flashcards" class="tab-btn flex items-center space-x-2 px-3.5 py-1.5 rounded-xl font-medium text-xs sm:text-sm transition whitespace-nowrap bg-sky-500 text-white shadow-sm">
+        <i class="fa-solid fa-layer-group"></i>
+        <span>Kartochkalar</span>
+      </button>
+      <button onclick="switchTab('quiz')" id="tab-quiz" class="tab-btn flex items-center space-x-2 px-3.5 py-1.5 rounded-xl font-medium text-xs sm:text-sm transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
+        <i class="fa-solid fa-circle-question"></i>
+        <span>Test (Quiz)</span>
+      </button>
+      <button onclick="switchTab('matching')" id="tab-matching" class="tab-btn flex items-center space-x-2 px-3.5 py-1.5 rounded-xl font-medium text-xs sm:text-sm transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
+        <i class="fa-solid fa-puzzle-piece"></i>
+        <span>Juftlikni top</span>
+      </button>
+      <button onclick="switchTab('spelling')" id="tab-spelling" class="tab-btn flex items-center space-x-2 px-3.5 py-1.5 rounded-xl font-medium text-xs sm:text-sm transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
+        <i class="fa-solid fa-keyboard"></i>
+        <span>Yozish mashqi</span>
+      </button>
+      <button onclick="switchTab('audio')" id="tab-audio" class="tab-btn flex items-center space-x-2 px-3.5 py-1.5 rounded-xl font-medium text-xs sm:text-sm transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
+        <i class="fa-solid fa-headphones"></i>
+        <span>Ovozli pleer</span>
+      </button>
+      <button onclick="switchTab('allwords')" id="tab-allwords" class="tab-btn flex items-center space-x-2 px-3.5 py-1.5 rounded-xl font-medium text-xs sm:text-sm transition whitespace-nowrap text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700">
+        <i class="fa-solid fa-book"></i>
+        <span>Lug'at & Qidiruv</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-4xl mx-auto px-4 py-6 flex-grow w-full">
+
+    <!-- 1. FLASHCARDS SECTION -->
+    <section id="sec-flashcards" class="tab-content block">
+      <div class="flex flex-col items-center">
+        <!-- Progress Bar -->
+        <div class="w-full max-w-md mb-3">
+          <div class="flex justify-between text-xs text-slate-500 dark:text-slate-400 mb-1">
+            <span id="unitTitleFlash">Unit 1</span>
+            <span id="cardProgressText">1 / 0</span>
+          </div>
+          <div class="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+            <div id="cardProgressBar" class="h-full bg-gradient-to-r from-sky-500 to-indigo-500 transition-all duration-300 w-[0%]"></div>
+          </div>
+        </div>
+
+        <!-- Flip Card -->
+        <div class="w-full max-w-md h-80 perspective-1000 my-2 cursor-pointer" onclick="flipCard()">
+          <div id="flashcardInner" class="w-full h-full relative transform-style-3d transition-transform duration-500 shadow-xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+            
+            <!-- Front Face (English) -->
+            <div class="absolute inset-0 w-full h-full backface-hidden flex flex-col items-center justify-between p-6 rounded-2xl">
+              <div class="w-full flex justify-between items-center">
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300">
+                  <span id="cardNumFront">1</span> / <span class="totalCardsCount">0</span>
+                </span>
+                <button onclick="speakCurrentCard(event)" class="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300 p-2 text-xl" title="Eshitish">
+                  <i class="fa-solid fa-volume-high"></i>
+                </button>
+              </div>
+
+              <div class="text-center my-auto px-2">
+                <h2 id="cardEnglish" class="text-3xl sm:text-4xl font-extrabold text-slate-800 dark:text-white mb-2 leading-tight">...</h2>
+                <p class="text-xs text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1">
+                  <i class="fa-solid fa-arrows-rotate text-xs"></i> Tarjimasini ko'rish uchun bosing
+                </p>
+              </div>
+
+              <div class="text-xs text-slate-400">Inglizcha</div>
+            </div>
+
+            <!-- Back Face (Uzbek) -->
+            <div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 flex flex-col items-center justify-between p-6 rounded-2xl bg-gradient-to-br from-slate-900 to-indigo-950 text-white dark:from-slate-800 dark:to-slate-900 border border-indigo-500/30">
+              <div class="w-full flex justify-between items-center">
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                  O'zbekcha tarjimasi
+                </span>
+                <button onclick="speakUzbekCurrentCard(event)" class="text-indigo-400 hover:text-indigo-200 p-2 text-xl" title="Eshitish">
+                  <i class="fa-solid fa-volume-high"></i>
+                </button>
+              </div>
+
+              <div class="text-center my-auto px-2">
+                <h3 id="cardUzbek" class="text-2xl sm:text-3xl font-bold text-sky-300 mb-2 leading-snug">...</h3>
+                <p id="cardEnglishSub" class="text-sm text-slate-300 font-medium">(...)</p>
+              </div>
+
+              <div class="text-xs text-slate-400">Orqaga qaytarish uchun bosing</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex items-center justify-between w-full max-w-md mt-4 gap-2">
+          <button onclick="prevCard()" class="px-4 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 transition font-medium text-sm flex items-center gap-2">
+            <i class="fa-solid fa-chevron-left"></i> Oldingisi
+          </button>
+
+          <button onclick="toggleAutoplay()" id="autoplayBtn" class="px-4 py-2.5 rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white font-medium text-sm shadow transition flex items-center gap-2">
+            <i class="fa-solid fa-play"></i> <span id="autoText">Avto</span>
+          </button>
+
+          <button onclick="nextCard()" class="px-4 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 transition font-medium text-sm flex items-center gap-2">
+            Keyingisi <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. QUIZ SECTION -->
+    <section id="sec-quiz" class="tab-content hidden">
+      <div class="max-w-xl mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+        
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100 dark:border-slate-700">
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-sky-500">Savol <span id="quizCurrentNum">1</span> / 10</span>
+            <h3 class="text-lg font-bold text-slate-800 dark:text-white">To'g'ri tarjimani tanlang</h3>
+          </div>
+          <div class="flex items-center space-x-2 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 px-3 py-1.5 rounded-xl font-bold text-sm">
+            <i class="fa-solid fa-trophy"></i>
+            <span>Ball: <span id="quizScore">0</span></span>
+          </div>
+        </div>
+
+        <div class="text-center py-6 px-4 bg-slate-50 dark:bg-slate-700/50 rounded-2xl mb-6 relative">
+          <button onclick="speakQuizWord()" class="absolute top-3 right-3 text-sky-500 hover:text-sky-700 dark:text-sky-400 p-2">
+            <i class="fa-solid fa-volume-high text-lg"></i>
+          </button>
+          <span id="quizDirectionBadge" class="text-xs font-medium text-slate-400 dark:text-slate-400 uppercase tracking-widest block mb-1">EN ➔ UZ</span>
+          <h2 id="quizQuestionWord" class="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-white">...</h2>
+        </div>
+
+        <div id="quizOptionsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6"></div>
+
+        <div id="quizFeedback" class="hidden text-center p-3 rounded-xl font-medium mb-4 text-sm"></div>
+
+        <button id="quizNextBtn" onclick="nextQuizQuestion()" class="hidden w-full py-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold transition shadow-md">
+          Keyingi savol <i class="fa-solid fa-arrow-right ml-1"></i>
+        </button>
+
+        <div id="quizResultScreen" class="hidden text-center py-6">
+          <div class="w-20 h-20 bg-amber-100 dark:bg-amber-900/40 text-amber-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Test Yakunlandi!</h2>
+          <p class="text-slate-600 dark:text-slate-300 mb-6">Siz 10 ta savoldan <strong id="finalQuizScore" class="text-sky-500 font-extrabold text-xl">0</strong> tasiga to'g'ri javob berdingiz.</p>
+          <button onclick="startQuiz()" class="px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold transition shadow-lg">
+            Qaytadan boshlash <i class="fa-solid fa-rotate-right ml-2"></i>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 3. MATCHING GAME SECTION -->
+    <section id="sec-matching" class="tab-content hidden">
+      <div class="max-w-2xl mx-auto">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 mb-4">
+          <div class="flex justify-between items-center mb-4">
+            <div>
+              <h2 class="text-lg font-bold text-slate-800 dark:text-white">Juftlikni toping</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400">Inglizcha so'z va uning o'zbekcha tarjimasini moslang</p>
+            </div>
+            <button onclick="initMatchingGame()" class="px-3 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg text-xs font-semibold transition flex items-center gap-1">
+              <i class="fa-solid fa-arrows-rotate"></i> Yangilash
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3" id="matchingGrid"></div>
+
+          <div id="matchingWinMessage" class="hidden text-center py-6 mt-4 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 rounded-xl">
+            <i class="fa-solid fa-circle-check text-4xl text-emerald-500 mb-2 block"></i>
+            <h3 class="text-xl font-bold text-emerald-700 dark:text-emerald-300">Ajoyib! Barchasini to'g'ri topdingiz!</h3>
+            <button onclick="initMatchingGame()" class="mt-4 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl transition text-sm">
+              Yangi so'zlar bilan o'ynash
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. SPELLING PRACTICE SECTION -->
+    <section id="sec-spelling" class="tab-content hidden">
+      <div class="max-w-xl mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+        <div class="text-center mb-6">
+          <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">Yozish mashqi</span>
+          <h2 class="text-2xl font-bold text-slate-800 dark:text-white mt-2">So'zni to'g'ri yozing</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">O'zbekcha ma'nosiga qarab inglizcha so'zni kiriting</p>
+        </div>
+
+        <div class="bg-slate-50 dark:bg-slate-700/40 p-6 rounded-2xl text-center mb-6">
+          <span class="text-xs font-medium text-slate-400 block mb-1">O'zbekcha:</span>
+          <h3 id="spellingUzbekWord" class="text-2xl sm:text-3xl font-extrabold text-indigo-600 dark:text-indigo-400 mb-2">...</h3>
+          <p id="spellingHintText" class="text-xs text-amber-600 dark:text-amber-400 min-h-[1rem] italic"></p>
+        </div>
+
+        <form onsubmit="checkSpelling(event)" class="space-y-4">
+          <div>
+            <input type="text" id="spellingInput" autocomplete="off" placeholder="Inglizcha so'zni yozing..." class="w-full px-4 py-3 text-center text-lg font-semibold rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+          </div>
+
+          <div id="spellingFeedback" class="hidden text-center p-3 rounded-xl text-sm font-semibold"></div>
+
+          <div class="flex gap-2">
+            <button type="button" onclick="showSpellingHint()" class="flex-1 py-3 bg-amber-100 hover:bg-amber-200 text-amber-800 dark:bg-amber-900/40 dark:hover:bg-amber-900/60 dark:text-amber-300 rounded-xl font-semibold transition text-sm flex items-center justify-center gap-1">
+              <i class="fa-solid fa-lightbulb"></i> Yordam
+            </button>
+            <button type="submit" class="flex-2 w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold transition shadow-md text-sm">
+              Tekshirish <i class="fa-solid fa-paper-plane ml-1"></i>
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- 5. AUDIO PLAYER SECTION -->
+    <section id="sec-audio" class="tab-content hidden">
+      <div class="max-w-2xl mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+        <div class="text-center mb-6">
+          <h2 class="text-xl font-bold text-slate-800 dark:text-white">Ovozli Avto-o'rgatuvchi</h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Har bir so'z: inglizcha, keyin o'zbekcha qaytariladi</p>
+        </div>
+
+        <!-- Controls Settings -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 dark:bg-slate-700/40 p-4 rounded-xl mb-6 text-xs">
+          <div>
+            <label class="block font-medium mb-1 text-slate-600 dark:text-slate-300">Inglizcha Ovoz</label>
+            <select id="voiceEnSelect" class="w-full p-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"></select>
+          </div>
+          <div>
+            <label class="block font-medium mb-1 text-slate-600 dark:text-slate-300">O'zbekcha Ovoz</label>
+            <select id="voiceUzSelect" class="w-full p-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800"></select>
+          </div>
+          <div>
+            <label class="block font-medium mb-1 text-slate-600 dark:text-slate-300">Takrorlanish soni</label>
+            <input type="number" id="audioRepInput" min="1" max="5" value="2" class="w-full p-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800">
+          </div>
+          <div>
+            <label class="block font-medium mb-1 text-slate-600 dark:text-slate-300">Pauza (soniya)</label>
+            <input type="number" id="audioGapInput" min="0" max="10" step="0.5" value="1.5" class="w-full p-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800">
+          </div>
+          <div class="sm:col-span-2">
+            <label class="block font-medium mb-1 text-slate-600 dark:text-slate-300">Tezlik (0.5x - 1.5x)</label>
+            <input type="range" id="audioRateInput" min="0.5" max="1.5" step="0.1" value="0.9" class="w-full">
+          </div>
+        </div>
+
+        <!-- Playback Display -->
+        <div class="text-center py-6 border-y border-slate-100 dark:border-slate-700 mb-6">
+          <div id="audioNowWord" class="text-2xl font-bold text-sky-600 dark:text-sky-400 mb-1">...</div>
+          <div id="audioStatusText" class="text-xs text-slate-400">Tugmani bosib ijroni boshlang</div>
+        </div>
+
+        <!-- Player Buttons -->
+        <div class="flex justify-center space-x-3">
+          <button id="btnAudioStart" onclick="startAudioPlayer(0)" class="px-6 py-3 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold transition shadow flex items-center gap-2">
+            <i class="fa-solid fa-play"></i> Boshlash
+          </button>
+          <button id="btnAudioStop" onclick="stopAudioPlayer()" class="px-6 py-3 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold transition shadow flex items-center gap-2">
+            <i class="fa-solid fa-stop"></i> To'xtatish
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. ALL WORDS LIST SECTION -->
+    <section id="sec-allwords" class="tab-content hidden">
+      <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
+        
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+          <div>
+            <h2 class="text-xl font-bold text-slate-800 dark:text-white">Lug'at va Qidiruv</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Tanlangan bo'limdagi barcha so'zlar ro'yxati</p>
+          </div>
+          
+          <div class="relative w-full sm:w-64">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400"></i>
+            <input type="text" id="searchInput" oninput="filterWords()" placeholder="So'z izlash..." class="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-sky-500">
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-400 dark:text-slate-400 uppercase tracking-wider">
+                <th class="py-3 px-4">#</th>
+                <th class="py-3 px-4">Inglizcha</th>
+                <th class="py-3 px-4">O'zbekcha</th>
+                <th class="py-3 px-4 text-center">Talaffuz</th>
+              </tr>
+            </thead>
+            <tbody id="wordsTableBody" class="divide-y divide-slate-100 dark:divide-slate-700/50 text-sm">
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 py-4 text-center text-xs text-slate-500 dark:text-slate-400 mt-auto">
+    <p>Oxford Elementary Lug'at platformasi — Unit 1-10 &copy; 2026</p>
+  </footer>
+
+  <script>
+    // FULL UNITS DATASET (1 - 10)
+    const UNITS = {
+      "1": [["address","manzil"],["alphabet","alifbo"],["am","bo‘lmoq; “I” bilan ishlatiladi"],["and","va"],["are","bo‘lmoq; “you, we, they” bilan ishlatiladi"],["be","bo‘lmoq"],["business","biznes; ish"],["city","shahar"],["country","mamlakat"],["day","kun"],["fine","yaxshi"],["first name","ism"],["from","…dan"],["good morning","xayrli tong"],["goodbye","xayr"],["great","ajoyib; juda yaxshi"],["hello","salom"],["here","bu yerda"],["hi","salom"],["holiday","ta’til"],["hotel","mehmonxona"],["how","qanday"],["I","men"],["in","ichida; …da"],["introduce","tanishtirmoq"],["is","bo‘lmoq; “he, she, it” bilan ishlatiladi"],["last name","familiya"],["letter","harf; xat"],["map","xarita"],["meeting","uchrashuv; yig‘ilish"],["name","ism"],["no","yo‘q"],["number","raqam; son"],["on","ustida; …da"],["right","to‘g‘ri"],["phone number","telefon raqami"],["spell","harflab aytmoq; yozmoq"],["study","o‘qimoq; tahsil olmoq"],["thanks","rahmat"],["that","u; ana u"],["too","ham"],["what","nima; qanday"],["where","qayerda; qayerga"],["yes","ha"],["you","sen; siz"],["your","sening; sizning"],["one","bir"],["two","ikki"],["three","uch"],["four","to‘rt"],["five","besh"],["six","olti"],["seven","yetti"],["eight","sakkiz"],["nine","to‘qqiz"],["ten","o‘n"],["Australia","Avstraliya"],["Brazil","Braziliya"],["China","Xitoy"],["Indonesia","Indoneziya"],["Japan","Yaponiya"],["Russia","Rossiya"],["Spain","Ispaniya"],["Turkey","Turkiya"],["the UK","Birlashgan Qirollik"],["the USA","Amerika Qo‘shma Shtatlari"]],
+      "2": [["a, an","bir; noaniq artikl"],["about","haqida"],["airport","aeroport"],["apple","olma"],["Argentina","Argentina"],["bag","sumka"],["book","kitob"],["building","bino"],["bus","avtobus"],["chef","oshpaz"],["class","sinf; dars"],["company","kompaniya; firma"],["doctor","shifokor"],["email","elektron xat; elektron pochta"],["engineer","muhandis"],["English","ingliz tili; inglizcha"],["friend","do‘st"],["garden","bog‘"],["guy","yigit; kishi"],["hospital","shifoxona"],["Italian","italyan; italyancha"],["Italy","Italiya"],["job","ish; kasb"],["key","kalit"],["language school","til maktabi"],["laptop","noutbuk"],["letter","xat"],["Mexico","Meksika"],["museum","muzey"],["near","yaqin; yaqinida"],["next to","yonida"],["nice","yaxshi; yoqimli; chiroyli"],["notepad","bloknot; qayd daftari"],["nurse","hamshira"],["object","buyum; narsa"],["o’clock","soat"],["office","ofis; ishxona"],["pen","ruchka"],["phone","telefon"],["photo","fotosurat; surat"],["restaurant","restoran"],["river","daryo"],["road","yo‘l"],["Romania","Ruminiya"],["school","maktab"],["shop assistant","do‘kon sotuvchisi"],["sister","opa; singil"],["square","maydon"],["station","bekat; stansiya"],["street","ko‘cha"],["student","talaba; o‘quvchi"],["tablet","planshet"],["taxi driver","taksi haydovchisi"],["teacher","o‘qituvchi"],["Thailand","Tailand"],["there","u yerda"],["these","bular"],["this","bu"],["those","anavilar; ana ular"],["time","vaqt; soat"],["train","poyezd"],["umbrella","soyabon"],["university","universitet"],["waiter","ofitsiant"],["wallet","hamyon"],["week","hafta"],["who","kim"],["eleven","o‘n bir"],["twelve","o‘n ikki"],["thirteen","o‘n uch"],["fourteen","o‘n to‘rt"],["fifteen","o‘n besh"],["sixteen","o‘n olti"],["seventeen","o‘n yetti"],["eighteen","o‘n sakkiz"],["nineteen","o‘n to‘qqiz"],["twenty","yigirma"],["twenty-one","yigirma bir"],["twenty-two","yigirma ikki"],["thirty","o‘ttiz"],["forty","qirq"],["fifty","ellik"],["sixty","oltmish"],["seventy","yetmish"],["eighty","sakson"],["ninety","to‘qson"],["a hundred","yuz"]],
+      "3": [["a.m.","ertalab; tushgacha bo‘lgan vaqt"],["artist","rassom; san’atkor"],["bad","yomon"],["bank account","bank hisobi"],["beautiful","chiroyli"],["bedroom","yotoqxona"],["best friend","eng yaqin do‘st"],["bicycle","velosiped"],["big","katta"],["boy","o‘g‘il bola"],["brother","aka; uka"],["but","lekin; ammo"],["called","deb ataladigan; ismli"],["car","mashina; avtomobil"],["cat","mushuk"],["centre","markaz"],["cheap","arzon"],["child","bola"],["children","bolalar"],["clever","aqlli"],["coffee","qahva"],["cold","sovuq"],["conference","konferensiya; anjuman"],["daughter","qiz farzand"],["dog","it"],["expensive","qimmat"],["family","oila"],["father","ota"],["film","film"],["flat","kvartira"],["for me","men uchun"],["friendly","do‘stona; xushmuomala"],["funny","kulgili"],["girl","qiz bola"],["good","yaxshi"],["grandfather","bobo"],["grandmother","buvi"],["grandparents","bobo va buvi"],["happy","xursand; baxtli"],["hard","qiyin"],["hot","issiq"],["house","uy"],["husband","er"],["interesting","qiziqarli"],["lovely","yoqimli; juda yaxshi"],["man","erkak"],["married","turmush qurgan"],["men","erkaklar"],["message","xabar"],["mobile phone","mobil telefon"],["mother","ona"],["musician","musiqachi"],["neighbour","qo‘shni"],["new","yangi"],["New Zealand","Yangi Zelandiya"],["of course","albatta"],["old","eski; qari"],["old (age)","yoshda"],["p.m.","tushdan keyin; kechki vaqt"],["painting","rasm; kartina"],["parents","ota-ona"],["people","odamlar"],["person","odam; kishi"],["pet","uy hayvoni"],["place","joy"],["please","iltimos"],["poor","kambag‘al"],["possession","mol-mulk; egalikdagi narsa"],["project","loyiha"],["rich","boy"],["room","xona"],["sad","xafa; g‘amgin"],["sea","dengiz"],["seat","o‘rindiq; joy"],["shop","do‘kon"],["sister","opa; singil"],["small","kichik"],["son","o‘g‘il farzand"],["song","qo‘shiq"],["sorry","uzr; afsus"],["TV","televizor"],["toilet","hojatxona"],["village","qishloq"],["wife","xotin; rafiqa"],["woman","ayol"],["women","ayollar"],["world","dunyo"],["young","yosh"]],
+      "4": [["a lot","ko‘p"],["actor","aktyor"],["art","san’at"],["at the weekend","dam olish kunlari"],["baseball","beysbol"],["basketball","basketbol"],["beach","plyaj; sohil"],["bookshop","kitob do‘koni"],["bus","avtobus"],["call","qo‘ng‘iroq qilmoq"],["card games","karta o‘yinlari"],["cent","sent"],["charity","xayriya"],["check emails","elektron xatlarni tekshirmoq"],["comics","komikslar"],["customer","mijoz; xaridor"],["cycle","velosiped minmoq"],["Denmark","Daniya"],["department store","universal do‘kon"],["different","boshqacha; turli"],["dollar","dollar"],["drive","mashina haydamoq"],["early","erta"],["electronics shop","elektronika do‘koni"],["euro","yevro"],["factory","zavod; fabrika"],["favourite","sevimli"],["ferry","parom"],["finish work","ishni tugatmoq"],["get dressed","kiyinmoq"],["get home","uyga kelmoq"],["get up","uyqudan turmoq"],["go","bormoq"],["go abroad","chet elga bormoq"],["go out","tashqariga chiqmoq"],["go to bed","uxlashga yotmoq"],["go to work","ishga bormoq"],["guitar","gitara"],["have","ega bo‘lmoq; bor bo‘lmoq"],["have a bath","vanna qabul qilmoq; cho‘milmoq"],["have a shower","dush qabul qilmoq"],["have breakfast","nonushta qilmoq"],["have dinner","kechki ovqat yemoq"],["help","yordam bermoq"],["in my free time","bo‘sh vaqtimda"],["journey","safar; sayohat"],["Kenya","Keniya"],["like","yoqtirmoq"],["live","yashamoq"],["lives","hayotlar"],["motorbike","mototsikl"],["named","ismli; deb nomlangan"],["need","kerak bo‘lmoq; muhtoj bo‘lmoq"],["newspaper","gazeta"],["over there","ana u yerda"],["park","park; bog‘"],["pence","pens"],["pharmacy","dorixona"],["play","o‘ynamoq"],["pound","funt"],["public transport","jamoat transporti"],["read","o‘qimoq"],["same","bir xil"],["similar","o‘xshash"],["sometimes","ba’zan"],["South Africa","Janubiy Afrika"],["South Korea","Janubiy Koreya"],["start work","ishni boshlamoq"],["study","o‘qimoq; tahsil olmoq"],["Switzerland","Shveytsariya"],["teach","dars bermoq; o‘qitmoq"],["tennis","tennis"],["text message","matnli xabar; SMS"],["ticket","chipta"],["together","birga"],["train","poyezd"],["Vietnam","Vyetnam"],["walk","piyoda yurmoq"],["watch","tomosha qilmoq"],["work","ishlamoq"],["writer","yozuvchi"],["Monday","dushanba"],["Tuesday","seshanba"],["Wednesday","chorshanba"],["Thursday","payshanba"],["Friday","juma"],["Saturday","shanba"],["Sunday","yakshanba"]],
+      "5": [["a piece of","bir bo‘lak; bir parcha"],["adult","katta yoshli odam"],["always","har doim"],["amazing","ajoyib; hayratlanarli"],["announcement","e’lon"],["architecture","me’morchilik"],["arm","qo‘l"],["bank","bank"],["bare feet","yalang oyoqlar"],["basic","asosiy; oddiy"],["because","chunki"],["black","qora"],["blue","ko‘k"],["body","tana"],["Bolivia","Boliviya"],["bowler hat","kotelok shlyapa"],["brown","jigarrang"],["busy","band"],["buy","sotib olmoq"],["casual","kundalik; norasmiy"],["change","o‘zgartirmoq"],["cinema","kinoteatr"],["close","yopmoq"],["clothes","kiyimlar"],["colour","rang"],["colourful","rang-barang"],["comment","izoh"],["designer","dizayner"],["dress","ko‘ylak"],["eat","yemoq"],["Europe","Yevropa"],["every day","har kuni"],["example","misol"],["exciting","hayajonli; qiziqarli"],["face","yuz"],["fake tan","sun’iy qorayish"],["famous","mashhur"],["fashion","moda"],["feature","xususiyat"],["first floor","birinchi qavat"],["floor","qavat; pol"],["flower","gul"],["foot","oyoq panjasi"],["France","Fransiya"],["go shopping","xarid qilishga bormoq"],["good quality","sifatli; yaxshi sifat"],["green","yashil"],["grey","kulrang"],["hair","soch"],["hand","qo‘l"],["head","bosh"],["important","muhim"],["in the week","hafta davomida; ish kunlarida"],["Indian","hind; hindistonlik"],["information","ma’lumot"],["interesting","qiziqarli"],["jacket","kurtka"],["jeans","jinsi shim"],["jumper","sviter"],["late","kech"],["leather","charm"],["leave","jo‘nab ketmoq; tark etmoq"],["leg","oyoq"],["location","joylashuv; manzil"],["long","uzun"],["lunch","tushlik"],["magazine","jurnal"],["make arrangements","kelishib olmoq; rejalar tuzmoq"],["midday","tush payti"],["modern","zamonaviy"],["music","musiqa"],["never","hech qachon"],["next","keyingi"],["night","tun; kechasi"],["often","tez-tez"],["open","ochmoq; ochiq"],["opening times","ochilish vaqtlari; ish vaqti"],["orange","to‘q sariq"],["outside","tashqarida"],["popular","mashhur; ommabop"],["public","ommaviy; jamoat uchun ochiq"],["really","haqiqatan; juda"],["reason","sabab"],["red","qizil"],["shawl","shol; yelka ro‘moli"],["shirt","ko‘ylak"],["shoes","poyabzal"],["skin","teri"],["skirt","yubka"],["smart","bashang; ozoda"],["speak","gapirmoq"],["sports","sport"],["stadium","stadion"],["strange","g‘alati"],["strong","kuchli"],["style","uslub"],["sun","quyosh"],["swimming pool","suzish havzasi"],["team","jamoa"],["think","o‘ylamoq"],["top","ustki kiyim; yuqori qism"],["town","shaharcha; shahar"],["traditional","an’anaviy"],["trainers","sport oyoq kiyimi; krossovka"],["travel","sayohat qilmoq"],["trousers","shim"],["T-shirt","futbolka"],["type","tur"],["unusual","noodatiy"],["useful","foydali"],["usually","odatda"],["wear","kiymoq"],["white","oq"],["why","nima uchun; nega"],["wind","shamol"],["wood","yog‘och"],["yellow","sariq"]],
+      "6": [["access","kirish huquqi; foydalanish imkoniyati"],["air conditioning","konditsioner; havoni sovitish tizimi"],["all","barcha; hamma"],["another","boshqa; yana bir"],["area","hudud; joy"],["arrive","yetib kelmoq"],["bakery","novvoyxona"],["balcony","balkon"],["bath","vanna"],["bathroom","hammom"],["bed","karavot"],["bedroom","yotoqxona"],["book","band qilmoq; bron qilmoq"],["broken","singan; buzilgan"],["café","kafe"],["car park","avtoturargoh"],["chair","stul"],["check-in","ro‘yxatdan o‘tish; mehmonxonaga kirish"],["checkout","mehmonxonadan chiqish"],["clean","toza"],["code","kod"],["cupboard","shkaf"],["dining room","ovqatlanish xonasi"],["dirty","iflos"],["drink","ichimlik"],["each","har bir"],["facilities","qulayliklar; xizmatlar"],["festival","festival; bayram tadbiri"],["fishing","baliq ovlash"],["for hours","soatlab; bir necha soat davomida"],["forest","o‘rmon"],["free parking","bepul avtoturargoh"],["fridge","muzlatkich"],["give","bermoq"],["golf course","golf maydoni"],["guest","mehmon"],["gym","sport zali"],["have a reservation","bron qilgan bo‘lmoq"],["heater","isitgich"],["instructions","ko‘rsatmalar; yo‘riqnoma"],["internet","internet"],["iron","dazmol"],["ironing board","dazmol taxtasi"],["kitchen","oshxona"],["lift","lift"],["like me","menga o‘xshagan; men kabi"],["link","havola"],["living room","mehmonxona"],["local","mahalliy"],["love","sevmoq; juda yoqtirmoq"],["lucky","omadli"],["microwave","mikroto‘lqinli pech"],["mini-bar","mini-bar"],["minute","daqiqa"],["mountain","tog‘"],["noisy","shovqinli"],["own","o‘ziga tegishli; o‘zining"],["password","parol"],["pizza","pitsa"],["problem","muammo"],["quiet","tinch; jim"],["reception","qabulxona"],["receptionist","qabulxona xodimi"],["refreshments","yengil taomlar va ichimliklar"],["safe","seyf"],["send","yubormoq"],["shower","dush"],["sofa","divan"],["staff","xodimlar"],["supermarket","supermarket"],["switch","o‘chirgich; yoqib-o‘chirish tugmasi"],["table","stol"],["tea","choy"],["theatre","teatr"],["theme","mavzu"],["toilet","hojatxona"],["towels","sochiqlar"],["tree house","daraxt uyi"],["try","urinib ko‘rmoq; sinab ko‘rmoq"],["TV","televizor"],["visitor","tashrif buyuruvchi; mehmon"],["water","suv"],["website","veb-sayt"],["Wi-Fi","simsiz internet"]],
+      "7": [["a bottle of","bir shisha; bir butilka"],["ability","qobiliyat"],["advert","reklama"],["Algeria","Jazoir"],["animal","hayvon"],["badly","yomon; yomon tarzda"],["behaviour","xulq-atvor"],["bird","qush"],["bored","zerikkan"],["boring","zerikarli"],["box","quti"],["computer skills","kompyuter ko‘nikmalari"],["contact","bog‘lanmoq; aloqa qilmoq"],["cook","ovqat pishirmoq"],["cost","turmoq; narxi bo‘lmoq"],["dance","raqs tushmoq"],["dolphin","delfin"],["each other","bir-birini; bir-biriga"],["electric piano","elektron pianino"],["enthusiastic","g‘ayratli; ishtiyoqli"],["fast","tez"],["fly","uchmoq"],["foreign language","chet tili"],["go on Facebook or Twitter","Facebook yoki Twitter’ga kirmoq"],["go out with friends","do‘stlar bilan tashqariga chiqmoq"],["go to the cinema","kinoteatrga bormoq"],["go to the theatre","teatrga bormoq"],["goldfish","tilla baliq"],["gorilla","gorilla"],["guide","gid; yo‘l ko‘rsatuvchi"],["hate","yomon ko‘rmoq"],["hobby","sevimli mashg‘ulot"],["interest","qiziqish"],["interested in","…ga qiziqqan"],["know","bilmoq"],["Lebanon","Livan"],["listen to music","musiqa tinglamoq"],["lost","adashgan; yo‘qolgan"],["make things","narsalar yasamoq"],["nobody","hech kim"],["paintbrush","rasm chizish cho‘tkasi"],["parrot","to‘tiqush"],["picture","rasm; surat"],["play sport","sport bilan shug‘ullanmoq"],["play video games","videoo‘yinlar o‘ynamoq"],["post","post; internetdagi yozuv"],["record","yozib olmoq; qayd etmoq"],["remember","eslamoq"],["research","tadqiqot"],["ride","minmoq"],["run","yugurmoq"],["seat","o‘rindiq; joy"],["shop online","internet orqali xarid qilmoq"],["sign","belgi; imo-ishora"],["sing","qo‘shiq aytmoq"],["skill","ko‘nikma; mahorat"],["slowly","sekin"],["social media","ijtimoiy tarmoqlar"],["Spanish","ispan tili; ispancha"],["swim","suzmoq"],["swimmer","suzuvchi"],["take photos","suratga olmoq"],["thirsty","chanqagan"],["tourist","sayyoh"],["translator","tarjimon"],["type","klaviaturada yozmoq; matn termoq"],["typist","matn teruvchi"],["Uruguay","Urugvay"],["video","video"],["volunteer","ko‘ngilli"],["watch sport","sport tomosha qilmoq"],["well","yaxshi; yaxshi tarzda"],["work in the garden","bog‘da ishlamoq"],["write","yozmoq"]],
+      "8": [["accident","baxtsiz hodisa; avariya"],["actress","aktrisa"],["adventure","sarguzasht"],["article","maqola"],["astronaut","astronavt; fazogir"],["birthday","tug‘ilgan kun"],["boss","boshliq; rahbar"],["carpenter","duradgor"],["century","asr"],["characters","qahramonlar; personajlar"],["collect","to‘plamoq; yig‘moq"],["die","vafot etmoq; o‘lmoq"],["document","hujjat"],["dream","orzu"],["foundation","jamg‘arma; fond"],["glider","motorsiz samolyot; planer"],["grow up","ulg‘aymoq"],["horse","ot"],["last year","o‘tgan yil"],["leader","yetakchi; rahbar"],["party","ziyofat; bazm"],["real","haqiqiy"],["return","qaytmoq"],["scientist","olim"],["storyteller","hikoyachi; ertakchi"],["tale","ertak; hikoya"],["was born","tug‘ilgan edi; dunyoga kelgan"],["yesterday","kecha"],["first","birinchi"],["second","ikkinchi"],["third","uchinchi"],["fourth","to‘rtinchi"],["fifth","beshinchi"],["sixth","oltinchi"],["seventh","yettinchi"],["eighth","sakkizinchi"],["ninth","to‘qqizinchi"],["tenth","o‘ninchi"],["eleventh","o‘n birinchi"],["twelfth","o‘n ikkinchi"],["twentieth","yigirmanchi"],["twenty-first","yigirma birinchi"],["twenty-third","yigirma uchinchi"],["thirtieth","o‘ttizinchi"],["thirty-first","o‘ttiz birinchi"],["January","yanvar"],["February","fevral"],["March","mart"],["April","aprel"],["May","may"],["June","iyun"],["July","iyul"],["August","avgust"],["September","sentabr"],["October","oktabr"],["November","noyabr"],["December","dekabr"]],
+      "9": [["a day off","dam olish kuni"],["ago","oldin; avval"],["atmosphere","muhit; atmosfera"],["autumn","kuz"],["bill","hisob; hisob varaqasi"],["cloudy","bulutli"],["cold","sovuq"],["come","kelmoq"],["comedian","komik; qiziqchi"],["cost","narx; xarajat"],["difficult","qiyin"],["ending","yakun; oxiri"],["event","voqea; tadbir"],["excuse","bahona; uzr"],["fall","yiqilmoq; tushmoq"],["fall in love","sevib qolmoq"],["forget","unutmoq"],["get","olmoq; yetib bormoq"],["get ill","kasal bo‘lmoq"],["happen","sodir bo‘lmoq"],["have a good time","vaqtni yaxshi o‘tkazmoq"],["headache","bosh og‘rig‘i"],["horror film","dahshatli film"],["hot","issiq"],["huge","ulkan; juda katta"],["illness","kasallik"],["in fact","aslida"],["keep warm","issiq tutmoq; isinib turmoq"],["knife","pichoq"],["lose","yo‘qotmoq"],["meat","go‘sht"],["meet","uchrashmoq"],["memory","xotira"],["millionaire","millioner"],["miss the train","poyezdni o‘tkazib yubormoq"],["mistake","xato"],["rainy","yomg‘irli"],["realize","anglamoq; tushunib yetmoq"],["receipt","chek; kvitansiya"],["retirement","nafaqaga chiqish; pensiya davri"],["see","ko‘rmoq"],["sell","sotmoq"],["service","xizmat"],["sleep","uxlamoq"],["snowy","qorli"],["spring","bahor"],["stormy","bo‘ronli"],["story","hikoya"],["subtropical","subtropik"],["summer","yoz"],["sunny","quyoshli"],["temperature","harorat"],["terrible","juda yomon; dahshatli"],["throw away","tashlab yubormoq"],["tip","choychaqa"],["waitress","ofitsiant ayol"],["warm","iliq"],["weather","ob-havo"],["winter","qish"]],
+      "10": [["a cup of","bir piyola; bir chashka"],["a kind of","bir turdagi"],["apple juice","olma sharbati"],["biscuit","pechenye"],["burger","burger"],["buy a house","uy sotib olmoq"],["cake","tort"],["chance","imkoniyat"],["change jobs","ishini o‘zgartirmoq"],["chips","fri kartoshka"],["coffee","qahva"],["croissant","kruassan"],["cupcake","kichik keks"],["dessert","shirinlik; desert"],["doughnut","ponchik"],["drink","ichimlik"],["during","davomida"],["environment","atrof-muhit"],["filling","ichlik; ichiga solinadigan masalliq"],["finish school","maktabni tugatmoq"],["flight","parvoz"],["food","ovqat; oziq-ovqat"],["have a baby","farzandli bo‘lmoq"],["hot dog","hot-dog"],["in three days","uch kundan keyin"],["international","xalqaro"],["invitation","taklifnoma"],["island","orol"],["join","qo‘shilmoq"],["learn a new language","yangi til o‘rganmoq"],["menu","menyu"],["milk","sut"],["move abroad","chet elga ko‘chib o‘tmoq"],["next month","keyingi oy"],["orange juice","apelsin sharbati"],["order","buyurtma"],["order","buyurtma bermoq"],["organization","tashkilot"],["probably","ehtimol; balki"],["rice","guruch"],["salad","salat"],["sandwich","sendvich"],["sing","qo‘shiq aytmoq"],["snack","yengil tamaddi"],["special","maxsus; alohida"],["sweet","shirin"],["tea","choy"],["the day after tomorrow","indinga"],["this evening","bugun kechqurun"],["today","bugun"],["tomorrow","ertaga"],["tour","sayohat; ekskursiya"],["water","suv"],["would like","xohlamoq; istamoq"]]
+    };
+
+    // State Variables
+    let currentUnitKey = "1";
+    let activeWords = [];
+    let currentCardIndex = 0;
+    let isFlipped = false;
+    let isAutoplay = false;
+    let autoplayTimer = null;
+
+    // Speech Synthesis
+    const ss = window.speechSynthesis;
+    let voices = [];
+
+    function fillVoiceOptions() {
+      if (!ss) return;
+      voices = ss.getVoices();
+      const enVoices = voices.filter(v => /^en/i.test(v.lang));
+      const uzVoices = voices.filter(v => /^uz/i.test(v.lang));
+
+      const ve = document.getElementById('voiceEnSelect');
+      const vu = document.getElementById('voiceUzSelect');
+
+      ve.innerHTML = '';
+      (enVoices.length ? enVoices : voices).forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.voiceURI;
+        opt.textContent = `${v.name} (${v.lang})`;
+        ve.appendChild(opt);
+      });
+
+      vu.innerHTML = '';
+      (uzVoices.length ? uzVoices : voices).forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.voiceURI;
+        opt.textContent = `${v.name} (${v.lang})`;
+        vu.appendChild(opt);
+      });
+    }
+
+    if (ss) {
+      fillVoiceOptions();
+      ss.onvoiceschanged = fillVoiceOptions;
+    }
+
+    function speakWord(text, lang = 'en-US', voiceURI = null) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = lang;
+        u.rate = parseFloat(document.getElementById('audioRateInput')?.value) || 0.9;
+        if (voiceURI) {
+          const v = voices.find(x => x.voiceURI === voiceURI);
+          if (v) u.voice = v;
+        }
+        window.speechSynthesis.speak(u);
+      }
+    }
+
+    // Theme Toggle
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    themeToggleBtn.addEventListener('click', () => {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    });
+    if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+
+    // Initialize Unit Tabs
+    function renderUnitTabs() {
+      const container = document.getElementById('unitTabsContainer');
+      container.innerHTML = '';
+
+      // All option
+      const allBtn = document.createElement('button');
+      allBtn.className = `px-3.5 py-1.5 rounded-xl font-semibold text-xs whitespace-nowrap transition border ${
+        currentUnitKey === 'all'
+          ? 'bg-sky-500 text-white border-sky-500 shadow-sm'
+          : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-200'
+      }`;
+      allBtn.textContent = 'Barchasi (Units 1-10)';
+      allBtn.onclick = () => selectUnit('all');
+      container.appendChild(allBtn);
+
+      Object.keys(UNITS).forEach(u => {
+        const btn = document.createElement('button');
+        btn.className = `px-3.5 py-1.5 rounded-xl font-semibold text-xs whitespace-nowrap transition border ${
+          currentUnitKey === u
+            ? 'bg-sky-500 text-white border-sky-500 shadow-sm'
+            : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:bg-slate-200'
+        }`;
+        btn.textContent = `Unit ${u} (${UNITS[u].length})`;
+        btn.onclick = () => selectUnit(u);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectUnit(key) {
+      currentUnitKey = key;
+      if (key === 'all') {
+        activeWords = [];
+        Object.keys(UNITS).forEach(k => {
+          UNITS[k].forEach(p => activeWords.push({ en: p[0], uz: p[1], unit: k }));
+        });
+      } else {
+        activeWords = UNITS[key].map(p => ({ en: p[0], uz: p[1], unit: key }));
+      }
+
+      currentCardIndex = 0;
+      renderUnitTabs();
+      updateBadgeCounts();
+      updateCardUI();
+
+      // Reset active mode screens if open
+      const activeTab = document.querySelector('.tab-btn.bg-sky-500').id.replace('tab-', '');
+      if (activeTab === 'quiz') startQuiz();
+      if (activeTab === 'matching') initMatchingGame();
+      if (activeTab === 'spelling') startSpellingPractice();
+      if (activeTab === 'allwords') renderAllWordsTable();
+      if (activeTab === 'audio') stopAudioPlayer();
+    }
+
+    function updateBadgeCounts() {
+      document.getElementById('totalWordsBadge').textContent = activeWords.length;
+      document.querySelectorAll('.totalCardsCount').forEach(el => el.textContent = activeWords.length);
+    }
+
+    // Tab Navigation
+    function switchTab(tabId) {
+      stopAudioPlayer();
+      clearInterval(autoplayTimer);
+      isAutoplay = false;
+      document.getElementById('autoText').textContent = 'Avto';
+
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-sky-500', 'text-white', 'shadow-sm');
+        btn.classList.add('text-slate-600', 'dark:text-slate-300');
+      });
+
+      document.getElementById(`sec-${tabId}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      activeBtn.classList.add('bg-sky-500', 'text-white', 'shadow-sm');
+      activeBtn.classList.remove('text-slate-600', 'dark:text-slate-300');
+
+      if (tabId === 'quiz') startQuiz();
+      if (tabId === 'matching') initMatchingGame();
+      if (tabId === 'spelling') startSpellingPractice();
+      if (tabId === 'allwords') renderAllWordsTable();
+    }
+
+    // 1. FLASHCARDS LOGIC
+    function updateCardUI() {
+      if (!activeWords.length) return;
+      const w = activeWords[currentCardIndex];
+
+      const inner = document.getElementById('flashcardInner');
+      inner.classList.remove('rotate-y-180');
+      isFlipped = false;
+
+      document.getElementById('cardNumFront').textContent = currentCardIndex + 1;
+      document.getElementById('cardEnglish').textContent = w.en;
+      document.getElementById('cardUzbek').textContent = w.uz;
+      document.getElementById('cardEnglishSub').textContent = `(${w.en})`;
+      document.getElementById('unitTitleFlash').textContent = currentUnitKey === 'all' ? `Unit ${w.unit}` : `Unit ${currentUnitKey}`;
+
+      const pct = ((currentCardIndex + 1) / activeWords.length) * 100;
+      document.getElementById('cardProgressBar').style.width = `${pct}%`;
+      document.getElementById('cardProgressText').textContent = `${currentCardIndex + 1} / ${activeWords.length}`;
+    }
+
+    function flipCard() {
+      const inner = document.getElementById('flashcardInner');
+      isFlipped = !isFlipped;
+      if (isFlipped) inner.classList.add('rotate-y-180');
+      else inner.classList.remove('rotate-y-180');
+    }
+
+    function speakCurrentCard(e) {
+      if (e) e.stopPropagation();
+      speakWord(activeWords[currentCardIndex].en, 'en-GB');
+    }
+
+    function speakUzbekCurrentCard(e) {
+      if (e) e.stopPropagation();
+      speakWord(activeWords[currentCardIndex].uz, 'uz-UZ');
+    }
+
+    function nextCard() {
+      currentCardIndex = (currentCardIndex + 1) % activeWords.length;
+      updateCardUI();
+    }
+
+    function prevCard() {
+      currentCardIndex = (currentCardIndex - 1 + activeWords.length) % activeWords.length;
+      updateCardUI();
+    }
+
+    function toggleAutoplay() {
+      isAutoplay = !isAutoplay;
+      const autoText = document.getElementById('autoText');
+      if (isAutoplay) {
+        autoText.textContent = 'To\'xtatish';
+        speakCurrentCard();
+        autoplayTimer = setInterval(() => {
+          flipCard();
+          setTimeout(() => {
+            nextCard();
+            speakCurrentCard();
+          }, 1800);
+        }, 3600);
+      } else {
+        autoText.textContent = 'Avto';
+        clearInterval(autoplayTimer);
+      }
+    }
+
+    // 2. QUIZ LOGIC
+    let quizQuestions = [];
+    let currentQuizIndex = 0;
+    let quizScore = 0;
+
+    function startQuiz() {
+      quizScore = 0;
+      currentQuizIndex = 0;
+      document.getElementById('quizScore').textContent = quizScore;
+      document.getElementById('quizResultScreen').classList.add('hidden');
+      document.getElementById('quizOptionsContainer').classList.remove('hidden');
+
+      const shuffled = [...activeWords].sort(() => 0.5 - Math.random());
+      quizQuestions = shuffled.slice(0, 10);
+      renderQuizQuestion();
+    }
+
+    function renderQuizQuestion() {
+      if (currentQuizIndex >= quizQuestions.length) {
+        showQuizResults();
+        return;
+      }
+
+      document.getElementById('quizNextBtn').classList.add('hidden');
+      document.getElementById('quizFeedback').classList.add('hidden');
+
+      const currentQ = quizQuestions[currentQuizIndex];
+      document.getElementById('quizCurrentNum').textContent = currentQuizIndex + 1;
+      document.getElementById('quizQuestionWord').textContent = currentQ.en;
+
+      const wrongOpts = activeWords.filter(v => v.en !== currentQ.en).sort(() => 0.5 - Math.random()).slice(0, 3);
+      const allOpts = [...wrongOpts, currentQ].sort(() => 0.5 - Math.random());
+
+      const container = document.getElementById('quizOptionsContainer');
+      container.innerHTML = '';
+
+      allOpts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = "w-full p-3.5 text-left font-semibold text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-sky-50 dark:hover:bg-slate-700/60 hover:border-sky-300 transition flex justify-between items-center text-sm";
+        btn.innerHTML = `<span>${opt.uz}</span> <i class="fa-regular fa-circle text-slate-300"></i>`;
+        btn.onclick = () => checkQuizAnswer(btn, opt.en, currentQ.en);
+        container.appendChild(btn);
+      });
+    }
+
+    function checkQuizAnswer(selectedBtn, selectedEn, correctEn) {
+      const container = document.getElementById('quizOptionsContainer');
+      container.querySelectorAll('button').forEach(b => b.disabled = true);
+
+      const feedback = document.getElementById('quizFeedback');
+      feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+
+      if (selectedEn === correctEn) {
+        quizScore += 1;
+        document.getElementById('quizScore').textContent = quizScore;
+        selectedBtn.className = "w-full p-3.5 text-left font-semibold bg-emerald-500 text-white rounded-xl shadow flex justify-between items-center text-sm";
+        selectedBtn.querySelector('i').className = "fa-solid fa-circle-check text-white";
+        feedback.classList.add('bg-emerald-100', 'text-emerald-800', 'dark:bg-emerald-900/50', 'dark:text-emerald-200');
+        feedback.innerHTML = `<i class="fa-solid fa-check-circle mr-1"></i> Barrakalla! To'g'ri javob.`;
+      } else {
+        selectedBtn.className = "w-full p-3.5 text-left font-semibold bg-rose-500 text-white rounded-xl shadow flex justify-between items-center text-sm";
+        selectedBtn.querySelector('i').className = "fa-solid fa-circle-xmark text-white";
+        feedback.classList.add('bg-rose-100', 'text-rose-800', 'dark:bg-rose-900/50', 'dark:text-rose-200');
+        const correctObj = activeWords.find(v => v.en === correctEn);
+        feedback.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-1"></i> Noto'g'ri. To'g'ri javob: <strong>${correctObj.uz}</strong>`;
+      }
+
+      document.getElementById('quizNextBtn').classList.remove('hidden');
+    }
+
+    function speakQuizWord() {
+      speakWord(quizQuestions[currentQuizIndex].en, 'en-GB');
+    }
+
+    function nextQuizQuestion() {
+      currentQuizIndex++;
+      renderQuizQuestion();
+    }
+
+    function showQuizResults() {
+      document.getElementById('quizOptionsContainer').classList.add('hidden');
+      document.getElementById('quizFeedback').classList.add('hidden');
+      document.getElementById('quizNextBtn').classList.add('hidden');
+      document.getElementById('finalQuizScore').textContent = quizScore;
+      document.getElementById('quizResultScreen').classList.remove('hidden');
+    }
+
+    // 3. MATCHING GAME
+    let selectedEngCard = null;
+    let selectedUzCard = null;
+    let matchedPairsCount = 0;
+
+    function initMatchingGame() {
+      matchedPairsCount = 0;
+      selectedEngCard = null;
+      selectedUzCard = null;
+      document.getElementById('matchingWinMessage').classList.add('hidden');
+
+      const randomFive = [...activeWords].sort(() => 0.5 - Math.random()).slice(0, 5);
+      const englishCards = [...randomFive].sort(() => 0.5 - Math.random());
+      const uzbekCards = [...randomFive].sort(() => 0.5 - Math.random());
+
+      const grid = document.getElementById('matchingGrid');
+      grid.innerHTML = '';
+
+      const engCol = document.createElement('div');
+      engCol.className = 'space-y-3';
+      const uzCol = document.createElement('div');
+      uzCol.className = 'space-y-3';
+
+      englishCards.forEach(item => {
+        const card = document.createElement('div');
+        card.dataset.en = item.en;
+        card.dataset.type = 'eng';
+        card.className = "matching-card p-3 bg-slate-50 dark:bg-slate-700/60 border-2 border-slate-200 dark:border-slate-600 rounded-xl font-bold text-center cursor-pointer transition select-none text-xs sm:text-sm dark:text-white hover:border-sky-400";
+        card.textContent = item.en;
+        card.onclick = () => selectMatchingCard(card);
+        engCol.appendChild(card);
+      });
+
+      uzbekCards.forEach(item => {
+        const card = document.createElement('div');
+        card.dataset.en = item.en;
+        card.dataset.type = 'uz';
+        card.className = "matching-card p-3 bg-slate-50 dark:bg-slate-700/60 border-2 border-slate-200 dark:border-slate-600 rounded-xl font-bold text-center cursor-pointer transition select-none text-xs sm:text-sm dark:text-white hover:border-sky-400";
+        card.textContent = item.uz;
+        card.onclick = () => selectMatchingCard(card);
+        uzCol.appendChild(card);
+      });
+
+      grid.appendChild(engCol);
+      grid.appendChild(uzCol);
+    }
+
+    function selectMatchingCard(card) {
+      if (card.classList.contains('matched')) return;
+
+      if (card.dataset.type === 'eng') {
+        if (selectedEngCard) selectedEngCard.classList.remove('border-sky-500', 'bg-sky-50', 'dark:bg-sky-900/40');
+        selectedEngCard = card;
+        selectedEngCard.classList.add('border-sky-500', 'bg-sky-50', 'dark:bg-sky-900/40');
+        speakWord(card.textContent, 'en-GB');
+      } else {
+        if (selectedUzCard) selectedUzCard.classList.remove('border-sky-500', 'bg-sky-50', 'dark:bg-sky-900/40');
+        selectedUzCard = card;
+        selectedUzCard.classList.add('border-sky-500', 'bg-sky-50', 'dark:bg-sky-900/40');
+      }
+
+      if (selectedEngCard && selectedUzCard) {
+        if (selectedEngCard.dataset.en === selectedUzCard.dataset.en) {
+          selectedEngCard.className = "p-3 bg-emerald-500 text-white rounded-xl font-bold text-center transition select-none text-xs sm:text-sm matched opacity-60 pointer-events-none";
+          selectedUzCard.className = "p-3 bg-emerald-500 text-white rounded-xl font-bold text-center transition select-none text-xs sm:text-sm matched opacity-60 pointer-events-none";
+          selectedEngCard = null;
+          selectedUzCard = null;
+          matchedPairsCount++;
+
+          if (matchedPairsCount === 5) {
+            document.getElementById('matchingWinMessage').classList.remove('hidden');
+          }
+        } else {
+          const c1 = selectedEngCard;
+          const c2 = selectedUzCard;
+          c1.classList.add('border-rose-500', 'bg-rose-50');
+          c2.classList.add('border-rose-500', 'bg-rose-50');
+          setTimeout(() => {
+            c1.classList.remove('border-rose-500', 'bg-rose-50', 'border-sky-500', 'bg-sky-50', 'dark:bg-sky-900/40');
+            c2.classList.remove('border-rose-500', 'bg-rose-50', 'border-sky-500', 'bg-sky-50', 'dark:bg-sky-900/40');
+          }, 600);
+          selectedEngCard = null;
+          selectedUzCard = null;
+        }
+      }
+    }
+
+    // 4. SPELLING LOGIC
+    let spellingCurrentVerb = null;
+
+    function startSpellingPractice() {
+      spellingCurrentVerb = activeWords[Math.floor(Math.random() * activeWords.length)];
+      document.getElementById('spellingUzbekWord').textContent = spellingCurrentVerb.uz;
+      document.getElementById('spellingInput').value = '';
+      document.getElementById('spellingHintText').textContent = '';
+      document.getElementById('spellingFeedback').classList.add('hidden');
+    }
+
+    function showSpellingHint() {
+      if (!spellingCurrentVerb) return;
+      const eng = spellingCurrentVerb.en;
+      document.getElementById('spellingHintText').textContent = `Boshlanishi: "${eng.substring(0, 2)}..." (${eng.length} ta harf)`;
+    }
+
+    function checkSpelling(e) {
+      e.preventDefault();
+      const inputVal = document.getElementById('spellingInput').value.trim().toLowerCase();
+      const targetVal = spellingCurrentVerb.en.toLowerCase();
+
+      const feedback = document.getElementById('spellingFeedback');
+      feedback.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+
+      if (inputVal === targetVal) {
+        speakWord(spellingCurrentVerb.en, 'en-GB');
+        feedback.classList.add('bg-emerald-100', 'text-emerald-800', 'dark:bg-emerald-900/50', 'dark:text-emerald-200');
+        feedback.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> To'g'ri! Barrakalla.`;
+        setTimeout(() => startSpellingPractice(), 1500);
+      } else {
+        feedback.classList.add('bg-rose-100', 'text-rose-800', 'dark:bg-rose-900/50', 'dark:text-rose-200');
+        feedback.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Qayta urinib ko'ring! To'g'ri yozilishi: <strong>${spellingCurrentVerb.en}</strong>`;
+      }
+    }
+
+    // 5. AUDIO PLAYER AUTO-LOOP LOGIC
+    let audioToken = 0;
+    let isAudioPlaying = false;
+
+    const wait = (ms) => new Promise(res => setTimeout(res, ms));
+
+    function speakPromise(text, voiceURI, lang) {
+      return new Promise(res => {
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = lang;
+        u.rate = parseFloat(document.getElementById('audioRateInput').value) || 0.9;
+        if (voiceURI) {
+          const v = voices.find(x => x.voiceURI === voiceURI);
+          if (v) u.voice = v;
+        }
+        u.onend = u.onerror = () => res();
+        ss.speak(u);
+      });
+    }
+
+    async function startAudioPlayer(fromIdx = 0) {
+      if (!ss) return;
+      ss.cancel();
+      const myToken = ++audioToken;
+      isAudioPlaying = true;
+
+      const rep = Math.max(1, parseInt(document.getElementById('audioRepInput').value) || 2);
+      const gap = Math.max(0, parseFloat(document.getElementById('audioGapInput').value) || 1.5) * 1000;
+      const veURI = document.getElementById('voiceEnSelect').value;
+      const vuURI = document.getElementById('voiceUzSelect').value;
+
+      for (let i = fromIdx; i < activeWords.length; i++) {
+        if (myToken !== audioToken) return;
+        const w = activeWords[i];
+
+        document.getElementById('audioNowWord').textContent = `${w.en} — ${w.uz}`;
+        document.getElementById('audioStatusText').textContent = `${i + 1} / ${activeWords.length} ta so'z o'qilmoqda...`;
+
+        // Repeat English
+        for (let r = 0; r < rep; r++) {
+          if (myToken !== audioToken) return;
+          await speakPromise(w.en, veURI, 'en-GB');
+          if (myToken !== audioToken) return;
+          await wait(gap);
+        }
+
+        // Repeat Uzbek
+        for (let r = 0; r < rep; r++) {
+          if (myToken !== audioToken) return;
+          await speakPromise(w.uz, vuURI, 'uz-UZ');
+          if (myToken !== audioToken) return;
+          await wait(gap);
+        }
+      }
+
+      document.getElementById('audioStatusText').textContent = "Barchasi o'qib bo'lindi.";
+      isAudioPlaying = false;
+    }
+
+    function stopAudioPlayer() {
+      audioToken++;
+      isAudioPlaying = false;
+      if (ss) ss.cancel();
+      document.getElementById('audioStatusText').textContent = "To'xtatildi.";
+    }
+
+    // 6. ALL WORDS TABLE LOGIC
+    function renderAllWordsTable(filterText = '') {
+      const tbody = document.getElementById('wordsTableBody');
+      tbody.innerHTML = '';
+
+      const filtered = activeWords.filter(v => 
+        v.en.toLowerCase().includes(filterText.toLowerCase()) || 
+        v.uz.toLowerCase().includes(filterText.toLowerCase())
+      );
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-400">Hech qanday so'z topilmadi</td></tr>`;
+        return;
+      }
+
+      filtered.forEach((verb, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 dark:hover:bg-slate-700/30 transition border-b border-slate-100 dark:border-slate-700/50";
+        tr.innerHTML = `
+          <td class="py-3 px-4 text-xs font-medium text-slate-400">${idx + 1}</td>
+          <td class="py-3 px-4 font-bold text-slate-800 dark:text-white">${verb.en}</td>
+          <td class="py-3 px-4 text-slate-600 dark:text-slate-300 text-xs sm:text-sm">${verb.uz}</td>
+          <td class="py-3 px-4 text-center">
+            <button onclick="speakWord('${verb.en.replace(/'/g, "\\'")}', 'en-GB')" class="text-sky-500 hover:text-sky-700 p-1.5 rounded-lg hover:bg-sky-50 dark:hover:bg-slate-700 transition">
+              <i class="fa-solid fa-volume-high"></i>
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function filterWords() {
+      renderAllWordsTable(document.getElementById('searchInput').value);
+    }
+
+    // INIT
+    window.onload = function() {
+      renderUnitTabs();
+      selectUnit("1");
+    };
+  </script>
 </body>
 </html>
